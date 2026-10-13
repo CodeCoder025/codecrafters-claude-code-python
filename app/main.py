@@ -50,6 +50,9 @@ def main():
         filePath = arguments.get("file_path")
         with open(filePath, "r") as i: #opens file from local machine
             fileContents = i.read()
+            if fileContents.endswith("None"):
+                fileContents, _ = fileContents.split(")")
+                fileContents = fileContents + ")"
             print(fileContents)
 
     # You can use print statements as follows for debugging, they'll be visible when running tests.
