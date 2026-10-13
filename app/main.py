@@ -1,6 +1,7 @@
 import argparse
 import os
 import sys
+import ast
 import json
 
 from openai import OpenAI
@@ -45,8 +46,8 @@ def main():
         raise RuntimeError("no choices in response")
     else:
         arguments = chat.choices[0].message.tool_calls[0].function.arguments
-        arguments = json.load(arguments)
-        filePath = arguments["file_path"]
+        arguments = ast.literal_eval(arguments) #converts a "dict" into a dict
+        filePath = arguments.get("file_path")
         with open(filePath, "r") as i:
             fileContents = i.read()
             print(fileContents)
