@@ -19,49 +19,50 @@ def main():
         raise RuntimeError("OPENROUTER_API_KEY is not set")
 
     client = OpenAI(api_key=API_KEY, base_url=BASE_URL)
-
-    chat = client.chat.completions.create(
-        model="anthropic/claude-haiku-4.5",
-        messages=[{"role": "user", "content": args.p}],
-        tools=[{
-                "type": "function",
-                "function": {
-                    "name": "Read",
-                    "description": "Read and return the contents of a file",
-                    "parameters": {
-                        "type": "object",
-                        "properties": {
-                            "file_path": {
-                                "type": "string",
-                                "description": "The path to the file to read"
+    messages = [{"role": "user", "content": args.p}]
+    while True:
+        chat = client.chat.completions.create(
+            model="anthropic/claude-haiku-4.5",
+            messages=messages,
+            tools=[{
+                    "type": "function",
+                    "function": {
+                        "name": "Read",
+                        "description": "Read and return the contents of a file",
+                        "parameters": {
+                            "type": "object",
+                            "properties": {
+                                "file_path": {
+                                    "type": "string",
+                                    "description": "The path to the file to read"
+                            }
+                        },
+                        "required": ["file_path"]
                         }
-                    },
-                    "required": ["file_path"]
                     }
-                }
-                }]
-    )
+                    }]
+        )
 
-    if not chat.choices or len(chat.choices) == 0:
-        raise RuntimeError("no choices in response")
-    elif chat.choices[0].message.tool_calls is None:
-        print(chat.choices[0].message.content)
-    else:
-        arguments = chat.choices[0].message.tool_calls[0].function.arguments #choices is a python object by itself! It is not a json. To retrieve values within a choice object, use "."
-        arguments = ast.literal_eval(arguments) #converts a "dict" into a dict
-        filePath = arguments.get("file_path")
-        with open(filePath, "r") as i: #opens file from local machine
-            fileContents = i.read()
-            if fileContents.endswith("None"):
-                fileContents, _ = fileContents.split(")")
-                fileContents = fileContents + ")"
-            print(fileContents)
+        if not chat.choices or len(chat.choices) == 0:
+            raise RuntimeError("no choices in response")
+        elif chat.choices[0].message.tool_calls is None:
+            chat.messages.append({"role":"assistant","content":chat.choices[0].message.content})
+            print(chat.choices[0].message.content)
+            break
+        else:
+            for i in chat.choices[0].message.tool_calls:
+                tool_call_id = i.id
+                if i.function.name == "Read":
+                    arguments = i.function.arguments #choices is a python object by itself! It is not a json. To retrieve values within a choice object, use "."
+                    arguments = ast.literal_eval(arguments) #converts a "dict" into a dict
+                    filePath = arguments.get("file_path")
+                    with open(filePath, "r") as i: #opens file from local machine
+                        fileContents = i.read()
+                        chat.messages.append({"role":"tool","tool_call_id":tool_call_id,"content":fileContents})
 
-    # You can use print statements as follows for debugging, they'll be visible when running tests.
-    print("Logs from your program will appear here!", file=sys.stderr)
-
-    # TODO: Uncomment the following line to pass the first stage
-
+                
+        # You can use print statements as follows for debugging, they'll be visible when running tests.
+        print("Logs from your program will appear here!", file=sys.stderr)
 
 
 if __name__ == "__main__":
