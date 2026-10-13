@@ -13,7 +13,7 @@ def main():
     p.add_argument("-p", required=True)
     args = p.parse_args()
 
-    if not API_KEYm:
+    if not API_KEY:
         raise RuntimeError("OPENROUTER_API_KEY is not set")
 
     client = OpenAI(api_key=API_KEY, base_url=BASE_URL)
