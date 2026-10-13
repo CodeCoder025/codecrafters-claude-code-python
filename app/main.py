@@ -51,6 +51,7 @@ def main():
             print(chat.choices[0].message.content)
             break
         else:
+            messages.append(chat.choices[0].message)
             for i in chat.choices[0].message.tool_calls:
                 print("Tool call used")
                 tool_call_id = i.id
