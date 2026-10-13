@@ -44,7 +44,7 @@ def main():
     if not chat.choices or len(chat.choices) == 0:
         raise RuntimeError("no choices in response")
     else:
-        arguments = chat.choices["message"]["tool_calls"][0]["function"]["arguments"]
+        arguments = chat.choices[0]["message"]["tool_calls"][0]["function"]["arguments"]
         with open(arguments, "r") as i:
             fileContents = i.read()
             print(fileContents)
