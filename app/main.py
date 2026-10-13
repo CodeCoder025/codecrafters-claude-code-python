@@ -45,8 +45,9 @@ def main():
         raise RuntimeError("no choices in response")
     else:
         arguments = chat.choices[0].message.tool_calls[0].function.arguments
-        arguments =arguments.get("file_path")
-        with open(arguments, "r") as i:
+        arguments = json.load(arguments)
+        filePath = arguments["file_path"]
+        with open(filePath, "r") as i:
             fileContents = i.read()
             print(fileContents)
 
