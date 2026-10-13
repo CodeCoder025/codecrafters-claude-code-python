@@ -44,7 +44,7 @@ def main():
 
     if not chat.choices or len(chat.choices) == 0:
         raise RuntimeError("no choices in response")
-    elif chat.choices[0].tool_calls is None:
+    elif chat.choices[0].message.tool_calls is None:
         print(chat.choices[0].message.content)
     else:
         arguments = chat.choices[0].message.tool_calls[0].function.arguments #choices is a python object by itself! It is not a json. To retrieve values within a choice object, use "."
