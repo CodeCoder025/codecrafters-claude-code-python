@@ -60,10 +60,6 @@ def main():
                         fileContents = i.read()
                         messages.append({"role":"tool","tool_call_id":tool_call_id,"content":fileContents})
 
-                
-        # You can use print statements as follows for debugging, they'll be visible when running tests.
-        print("Logs from your program will appear here!", file=sys.stderr)
-
-
+            
 if __name__ == "__main__":
     main()
