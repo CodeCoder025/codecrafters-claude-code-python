@@ -44,6 +44,8 @@ def main():
 
     if not chat.choices or len(chat.choices) == 0:
         raise RuntimeError("no choices in response")
+    elif chat.choices[0].tool_calls is None:
+        print(chat.choices[0].message.content)
     else:
         arguments = chat.choices[0].message.tool_calls[0].function.arguments #choices is a python object by itself! It is not a json. To retrieve values within a choice object, use "."
         arguments = ast.literal_eval(arguments) #converts a "dict" into a dict
@@ -59,7 +61,7 @@ def main():
     print("Logs from your program will appear here!", file=sys.stderr)
 
     # TODO: Uncomment the following line to pass the first stage
-    #print(chat.choices[0].message.content)
+
 
 
 if __name__ == "__main__":
