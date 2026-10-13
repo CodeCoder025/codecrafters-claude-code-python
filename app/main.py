@@ -45,10 +45,10 @@ def main():
     if not chat.choices or len(chat.choices) == 0:
         raise RuntimeError("no choices in response")
     else:
-        arguments = chat.choices[0].message.tool_calls[0].function.arguments
+        arguments = chat.choices[0].message.tool_calls[0].function.arguments #choices is a python object by itself! It is not a json. To retrieve values within a choice object, use "."
         arguments = ast.literal_eval(arguments) #converts a "dict" into a dict
         filePath = arguments.get("file_path")
-        with open(filePath, "r") as i:
+        with open(filePath, "r") as i: #opens file from local machine
             fileContents = i.read()
             print(fileContents)
 
