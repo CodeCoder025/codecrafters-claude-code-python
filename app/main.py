@@ -1,3 +1,5 @@
+#Tbh this is much more pythonic than i expected. Its all about formatting and understanding JSONs and the chat & choice objects
+
 import argparse
 import os
 import sys
@@ -47,7 +49,7 @@ def main():
             raise RuntimeError("no choices in response")
         elif chat.choices[0].message.tool_calls is None:
             messages.append({"role":"assistant","content":chat.choices[0].message.content})
-            print(chat.choices[0].message.content)
+            print(chat.choices[0].message.content) #agent run can end when it returns a response with no more tool calls left
             break
         else:
             messages.append(chat.choices[0].message) #append agent reply to message string
