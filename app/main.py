@@ -21,6 +21,7 @@ def main():
     client = OpenAI(api_key=API_KEY, base_url=BASE_URL)
     messages = [{"role": "user", "content": args.p}]
     while True:
+        print("back and forth")
         chat = client.chat.completions.create(
             model="anthropic/claude-haiku-4.5",
             messages=messages,
@@ -51,6 +52,7 @@ def main():
             break
         else:
             for i in chat.choices[0].message.tool_calls:
+                print("Tool call used")
                 tool_call_id = i.id
                 if i.function.name == "Read":
                     arguments = i.function.arguments #choices is a python object by itself! It is not a json. To retrieve values within a choice object, use "."
