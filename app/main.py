@@ -1,6 +1,7 @@
 import argparse
 import os
 import sys
+import json
 
 from openai import OpenAI
 
@@ -42,6 +43,11 @@ def main():
 
     if not chat.choices or len(chat.choices) == 0:
         raise RuntimeError("no choices in response")
+    else:
+        arguments = chat.choices["message"]["tool_calls"][0]["function"]["arguments"]
+        with open(arguments, "r") as i:
+            fileContents = i.read()
+            print(fileContents)
 
     # You can use print statements as follows for debugging, they'll be visible when running tests.
     print("Logs from your program will appear here!", file=sys.stderr)
