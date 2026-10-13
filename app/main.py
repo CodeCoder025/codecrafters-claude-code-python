@@ -46,7 +46,7 @@ def main():
         if not chat.choices or len(chat.choices) == 0:
             raise RuntimeError("no choices in response")
         elif chat.choices[0].message.tool_calls is None:
-            chat.messages.append({"role":"assistant","content":chat.choices[0].message.content})
+            messages.append({"role":"assistant","content":chat.choices[0].message.content})
             print(chat.choices[0].message.content)
             break
         else:
@@ -58,7 +58,7 @@ def main():
                     filePath = arguments.get("file_path")
                     with open(filePath, "r") as i: #opens file from local machine
                         fileContents = i.read()
-                        chat.messages.append({"role":"tool","tool_call_id":tool_call_id,"content":fileContents})
+                        messages.append({"role":"tool","tool_call_id":tool_call_id,"content":fileContents})
 
                 
         # You can use print statements as follows for debugging, they'll be visible when running tests.
