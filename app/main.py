@@ -29,7 +29,7 @@ def main():
             tools=[{
                     "type": "function",
                     "function": {
-                        "name": "Read",
+                        "name": "ReadFile",
                         "description": "Read and return the contents of a file",
                         "parameters": {
                             "type": "object",
@@ -42,6 +42,26 @@ def main():
                         "required": ["file_path"]
                         }
                     }
+                    },
+                    {
+                        "type":"function",
+                        "function":{
+                            "name":"WriteFile",
+                            "description":"Write content into a file",
+                            "parameters":{
+                                "type":"object",
+                                "required":["file_path","content"],
+                                "properties":{
+                                    "file_path":{
+                                        "type":"string",
+                                        "description":"path of file to write to"},
+                                    "content": {
+                                        "type":"string",
+                                        "description":"contents to write into the file"
+                                    }
+                                }
+                            }
+                        }
                     }]
         )
 
@@ -55,13 +75,23 @@ def main():
             messages.append(chat.choices[0].message) #append agent reply to message string
             for i in chat.choices[0].message.tool_calls:
                 tool_call_id = i.id
-                if i.function.name == "Read":
+                if i.function.name == "ReadFile":
                     arguments = i.function.arguments #choices is a python object by itself! It is not a json. To retrieve values within a choice object, use "."
                     arguments = ast.literal_eval(arguments) #converts a "dict" into a dict
                     filePath = arguments.get("file_path")
                     with open(filePath, "r") as i: #opens file from local machine
                         fileContents = i.read()
                         messages.append({"role":"tool","tool_call_id":tool_call_id,"content":fileContents}) #append result of tool call to message string
+                if i.function.name == "WriteFile":
+                    arguments = i.function.arguments
+                    arguments = ast.literal_eval(arguments)
+                    filePath = arguments.get("file_path")
+                    writeContent = arguments.get("content")
+                    with open(filePath, "w") as i:
+                        i.write(writeContent)
+                        with open(filePath, "r") as j:
+                            newFileContent = j.read(filePath)
+                        messages.append({"role":"tool","tool_call_id":tool_call_id,"content":"Write tool successful! File contents: %s"%newFileContent})
 
             
 if __name__ == "__main__":
