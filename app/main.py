@@ -23,7 +23,7 @@ def main():
 
     client = OpenAI(api_key=API_KEY, base_url=BASE_URL)
 
-    messages = [{"role":"system","content":"You have access to the following skills: \n\n Apple: Deploys the apple service to production\nGrade: Runs the grape test suite and reports failures"},
+    messages = [{"role":"system","content":"You have access to the following skills: \n\n Apple: Deploys the apple service to production\nGrape: Runs the grape test suite and reports failures"},
                 {"role": "user", "content": args.p}]
     if messages[1].get("content").startswith("/"):
         if messages[1].get("content").count(" ") == 0:
