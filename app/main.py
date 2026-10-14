@@ -22,7 +22,12 @@ def main():
         raise RuntimeError("OPENROUTER_API_KEY is not set")
 
     client = OpenAI(api_key=API_KEY, base_url=BASE_URL)
-    messages = [{"role": "user", "content": args.p}]
+
+    messages = [{"role":"system","content":"You have access to the following skills: \n\n Apple: Deploys the apple service to production\nGrade: Runs the grape test suite and reports failures"},
+                {"role": "user", "content": args.p}]
+    #an overview of all skills available (just the name and description, not the body) is given to the model as a system prompt
+    #However, the model only sees the body of the skill when it is invoked. The most direct way to do this is "/[skillname]". This gets replaced with the body text of the skill
+    
     while True:
         chat = client.chat.completions.create(
             model="anthropic/claude-haiku-4.5",
