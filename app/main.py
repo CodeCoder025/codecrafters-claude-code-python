@@ -90,7 +90,7 @@ def main():
                     with open(filePath, "w") as q:
                         q.write(writeContent)
                         with open(filePath, "r") as r:
-                            newFileContent = r.read(filePath)
+                            newFileContent = r.read()
                         messages.append({"role":"tool","tool_call_id":tool_call_id,"content":"Write tool successful! File contents: %s"%newFileContent})
 
             
