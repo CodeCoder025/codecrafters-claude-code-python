@@ -6,6 +6,8 @@ import sys
 import ast
 import json
 import subprocess
+from pathlib import Path
+from .skills import parse_skill_md
 
 from openai import OpenAI
 
@@ -23,7 +25,17 @@ def main():
 
     client = OpenAI(api_key=API_KEY, base_url=BASE_URL)
 
-    messages = [{"role":"system","content":"You have access to the following skills: \n\n Apple: Deploys the apple service to production\nGrape: Runs the grape test suite and reports failures"},
+    skills_dir = Path(".claude/skills")
+    if skills_dir.exists():
+        subdirs = (d for d in skills_dir.iterdir() if d.is_dir())
+        for subdir in subdirs:
+            try:
+                fm, *_ = parse_skill_md(subdir / "SKILL.md")
+            except FileNotFoundError:
+                continue
+            skillsAvailable += f"\n- {fm['name']}: {fm['description']}"
+
+    messages = [{"role":"system","content":"You have access to the following skills: %s"%skillsAvailable},
                 {"role": "user", "content": args.p}]
     if messages[1].get("content").startswith("/"):
         if messages[1].get("content").count(" ") == 0:
