@@ -27,9 +27,9 @@ def main():
                 {"role": "user", "content": args.p}]
     if messages[1].get("content").startswith("/"):
         if messages[1].get("content").count(" ") == 0:
-            skillInvoked = messages[1].get("content")[1:len(messages[1].get("content"))-1]
+            skillInvoked = messages[1].get("content")[1:len(messages[1].get("content"))]
         else:
-            skillInvoked = messages[1].get("content").split(" ")[0][1:len(messages[1].get("content"))-1]
+            skillInvoked = messages[1].get("content").split(" ")[0][1:len(messages[1].get("content"))]
         with open(".claude/skills/%s/SKILL.md"%skillInvoked,"r") as i:
             skillFileContent = i.read()
             _, skillFileBody = skillFileContent.split("---",2)
