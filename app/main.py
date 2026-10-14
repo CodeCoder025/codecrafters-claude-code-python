@@ -79,18 +79,18 @@ def main():
                     arguments = i.function.arguments #choices is a python object by itself! It is not a json. To retrieve values within a choice object, use "."
                     arguments = ast.literal_eval(arguments) #converts a "dict" into a dict
                     filePath = arguments.get("file_path")
-                    with open(filePath, "r") as i: #opens file from local machine
-                        fileContents = i.read()
+                    with open(filePath, "r") as p: #opens file from local machine
+                        fileContents = p.read()
                         messages.append({"role":"tool","tool_call_id":tool_call_id,"content":fileContents}) #append result of tool call to message string
                 if i.function.name == "WriteFile":
                     arguments = i.function.arguments
                     arguments = ast.literal_eval(arguments)
                     filePath = arguments.get("file_path")
                     writeContent = arguments.get("content")
-                    with open(filePath, "w") as i:
-                        i.write(writeContent)
-                        with open(filePath, "r") as j:
-                            newFileContent = j.read(filePath)
+                    with open(filePath, "w") as q:
+                        q.write(writeContent)
+                        with open(filePath, "r") as r:
+                            newFileContent = r.read(filePath)
                         messages.append({"role":"tool","tool_call_id":tool_call_id,"content":"Write tool successful! File contents: %s"%newFileContent})
 
             
