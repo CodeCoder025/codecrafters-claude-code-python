@@ -32,7 +32,8 @@ def main():
             skillInvoked = messages[1].get("content").split(" ")[0][1:len(messages[1].get("content"))]
         with open(".claude/skills/%s/SKILL.md"%skillInvoked,"r") as i:
             skillFileContent = i.read()
-            _, skillFileBody = skillFileContent.split("---",2)
+            bodyAfter = skillFileContent.find("---",3)
+            skillFileBody = skillFileContent[bodyAfter+3:]
             messages[1]["content"] = skillFileBody
 
     #an overview of all skills available (just the name and description, not the body) is given to the model as a system prompt
