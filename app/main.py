@@ -5,6 +5,7 @@ import os
 import sys
 import ast
 import json
+import subprocess
 
 from openai import OpenAI
 
@@ -62,6 +63,23 @@ def main():
                                 }
                             }
                         }
+                    },
+                    {
+                        "type":"function",
+                        "function":{
+                            "name":"Bash",
+                            "description":"run a shell command",
+                            "parameters":{
+                                "type":"object",
+                                "required":["command"],
+                                "properties":{
+                                    "command":{
+                                        "type":"string",
+                                        "description":"the command to execute"
+                                    }
+                                }
+                            }
+                        }
                     }]
         )
 
@@ -92,6 +110,15 @@ def main():
                         with open(filePath, "r") as r:
                             newFileContent = r.read()
                         messages.append({"role":"tool","tool_call_id":tool_call_id,"content":"Write tool successful! File contents: %s"%newFileContent})
+                if i.function.name == "Bash":
+                    arguments = ast.literal_eval(i.function.arguments)
+                    command = arguments.get("command")
+                    result = subprocess.run(command, shell = True, capture_output = True, text = True)
+                    if result.returncode == 0:
+                        messages.append({"role":"tool","tool_call_id":tool_call_id,"content":result.stdout})
+                    elif result.returncode == 1:
+                        messages.append({"role":"tool","tool_call_id":tool_call_id,"content":result.stderr})
+
 
             
 if __name__ == "__main__":
