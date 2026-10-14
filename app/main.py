@@ -25,8 +25,17 @@ def main():
 
     messages = [{"role":"system","content":"You have access to the following skills: \n\n Apple: Deploys the apple service to production\nGrade: Runs the grape test suite and reports failures"},
                 {"role": "user", "content": args.p}]
+    if messages[1].get("content").startswith("/"):
+        if messages[1].get("content").count(" ") == 0:
+            skillInvoked = messages[1].get("content")[1:len(messages[1].get("content"))-1]
+        else:
+            skillInvoked = messages[1].get("content").split(" ")[0][1:len(messages[1].get("content"))-1]
+        with open(".claude/skills/%s/SKILL.md"%skillInvoked,"r") as i:
+            skillFileContent = i.read()
+            _, skillFileBody = skillFileContent.split("---",2)
+            messages[1]["content"] = skillFileBody
+
     #an overview of all skills available (just the name and description, not the body) is given to the model as a system prompt
-    #However, the model only sees the body of the skill when it is invoked. The most direct way to do this is "/[skillname]". This gets replaced with the body text of the skill
     
     while True:
         chat = client.chat.completions.create(
